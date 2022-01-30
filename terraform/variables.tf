@@ -95,3 +95,60 @@ variable "tags" {
   }
 }
 
+##################################################################
+variable "identifier_for_rds" {
+  default = "demodb"
+}
+
+variable "engine_for_rds" {
+  default = "mysql"
+}
+
+variable "engine_version_for_rds" {
+  default = "5.7.19"
+}
+
+variable "instance_class_for_rds" {
+  default = "db.t2.micro"
+}
+
+variable "allocated_storage_for_rds" {
+  default = 5
+}
+
+variable "db_name" {
+  default = ""
+}
+
+variable "db_username" {
+  default = ""
+}
+
+variable "db_password" {
+  default = ""
+}
+
+variable "db_port" {
+  default = "3306"
+}
+
+variable "maintenance_window" {
+  default = "Mon:00:00-Mon:03:00"
+}
+
+variable "backup_window" {
+  default = "03:00-06:00"
+}
+
+variable "backup_retention_period" {
+  default = 0
+}
+
+variable "family" {
+  default = "mysql5.7"
+}
+
+variable "major_engine_version" {
+  default = "5.7"
+}
+

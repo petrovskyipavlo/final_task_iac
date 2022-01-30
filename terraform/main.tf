@@ -110,6 +110,18 @@ module "deployment_sg" {
   tags = var.tags 
 }
 
+module "db-sg" {
+  source = "terraform-aws-modules/security-group/aws"
+
+  name        = "sg_for_database"
+  description = "Security group for database"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress_cidr_blocks = [module.vpc.vpc_cidr_block]
+  ingress_rules       = ["mysql-tcp", "ssh-tcp"]
+  egress_rules        = ["all-all"]
+}
+
 module "jenkins_master" {
   source  = "terraform-aws-modules/ec2-instance/aws"
   version = "~> 3.0"
@@ -200,13 +212,4 @@ module "prod_server" {
 
   tags = var.tags 
 }
-
-
-
-
-
-
-
-
-
 

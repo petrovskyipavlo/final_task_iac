@@ -1,10 +1,13 @@
 // Jenkinsfile
 String credentials_id = 'pavelp'
 properties([pipelineTriggers([githubPush()])])
+
+load "$JENKINS_HOME/.envvars/.env.groovy"
+
 pipeline {
   
   environment {
-       
+    envvar             ='prod'   
     plan_file          = 'plan.tfplan'
     AWS_DEFAULT_REGION ="eu-central-1"        
   }
@@ -33,13 +36,22 @@ pipeline {
       }
     }
 
+    stage ('Decrypt the Secrets File') {
+      sh """
+       set +x
+       cd ${WORKSPACE}/terraform
+       ansible-vault decrypt --vault-password-file=${env.VAULT_LOCATION}/${envvar}.txt ${envvar}-secrets.tfvars
+       
+       """
+    }
+
     stage('Terraform Initialisation') {
       steps {
         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: credentials_id, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
           sh '''
             echo "#---> Initialisation and validation infrastructure with TF..."
             cd ${WORKSPACE}/terraform
-            terraform init && terraform validate
+            terraform init && terraform validate -var-file=${envvar}-secrets.tfvars"
             
           '''
         }
@@ -53,7 +65,7 @@ pipeline {
             echo "#---> Create  infrastructure with TF..."
             cd ${WORKSPACE}/terraform       
                      
-            terraform apply -auto-approve
+            terraform apply -auto-approve -var-file=${envvar}-secrets.tfvars"
           '''
         }
       }
@@ -71,6 +83,14 @@ pipeline {
           '''
         }
       }
+    }
+
+     stage ('Re-Encrypt the Secrets File') {
+      sh """
+       set +x
+       cd ${WORKSPACE}/terraform   
+       ansible-vault encrypt --vault-password-file=${env.VAULT_LOCATION}/${envvar}.txt ${envvar}-secrets.tfvars      
+       """
     }
     
     stage("Approve") {

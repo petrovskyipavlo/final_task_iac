@@ -41,4 +41,10 @@ If you can't login as Jenkins user:
    chgrp jenkins -R path/to/directory
 ```
 
+Encript file:
+
+```sh
+   sudo ansible-vault encrypt  --vault-password-file=/var/lib/jenkins/.vault/prod.txt   /var/lib/jenkins/.vault/prod-secrets.tfvars
+```
+
 [Securing Secrets for your IaC using Jenkins, Terraform and Ansible Vault] (https://wbassler23.medium.com/securing-secrets-for-your-iac-using-jenkins-terraform-and-ansible-vault-7009e0a7eb32)

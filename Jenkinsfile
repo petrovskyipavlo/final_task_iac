@@ -4,8 +4,7 @@ properties([pipelineTriggers([githubPush()])])
 pipeline {
   
   environment {
-    tf_s3              = 'infrastructure/s3_tfstate'
-    iac                = './iac'     
+       
     plan_file          = 'plan.tfplan'
     AWS_DEFAULT_REGION ="eu-central-1"        
   }
@@ -39,7 +38,7 @@ pipeline {
         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: credentials_id, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
           sh '''
             echo "#---> Initialisation and validation infrastructure with TF..."
-            cd ${WORKSPACE}/$iac
+            cd ${WORKSPACE}/terraform
             terraform init && terraform validate
             
           '''
@@ -49,10 +48,10 @@ pipeline {
 
     stage('Create Infrastructure ') {
       steps {
-        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'pavelp', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: credentials_id, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
           sh '''
             echo "#---> Create  infrastructure with TF..."
-            cd ${WORKSPACE}/$iac         
+            cd ${WORKSPACE}/terraform       
                      
             terraform apply -auto-approve
           '''
@@ -62,10 +61,10 @@ pipeline {
 	
 	stage('Create list of output variables') {
       steps {
-        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'pavelp', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: credentials_id, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
           sh '''
             echo "#---> Create list of output variables..."
-            cd ${WORKSPACE}/$iac        
+            cd ${WORKSPACE}/terraform       
                        
             terraform output
 			terraform output -json
@@ -80,10 +79,10 @@ pipeline {
 
     stage('WARNING!!! Destroy  Infrastructure ') {
       steps {
-        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'pavelp', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentials_id: 'pavelp', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
           sh '''
             echo "#---> Destroy infrastructure with TF..."
-            cd ${WORKSPACE}/$iac
+            cd ${WORKSPACE}/terraform
             
             terraform destroy -auto-approve
           '''

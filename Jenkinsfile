@@ -37,12 +37,13 @@ pipeline {
     }
 
     stage ('Decrypt the Secrets File') {
-      sh """
-       set +x
-       cd ${WORKSPACE}/terraform
-       ansible-vault decrypt --vault-password-file=${env.VAULT_LOCATION}/${envvar}.txt ${envvar}-secrets.tfvars
-       
-       """
+        steps{
+            sh """
+              set +x
+              cd ${WORKSPACE}/terraform
+              ansible-vault decrypt --vault-password-file=${env.VAULT_LOCATION}/${envvar}.txt ${envvar}-secrets.tfvars       
+            """
+        } 
     }
 
     stage('Terraform Initialisation') {
@@ -85,13 +86,15 @@ pipeline {
       }
     }
 
-     stage ('Re-Encrypt the Secrets File') {
-      sh """
-       set +x
-       cd ${WORKSPACE}/terraform   
-       ansible-vault encrypt --vault-password-file=${env.VAULT_LOCATION}/${envvar}.txt ${envvar}-secrets.tfvars      
-       """
-    }
+  stage ('Re-Encrypt the Secrets File') {
+      steps{
+          sh """
+            set +x
+            cd ${WORKSPACE}/terraform   
+            ansible-vault encrypt --vault-password-file=${env.VAULT_LOCATION}/${envvar}.txt ${envvar}-secrets.tfvars      
+          """
+      }
+  }
     
     stage("Approve") {
       steps { approve('Do you want to destroy your infrastructure?') }

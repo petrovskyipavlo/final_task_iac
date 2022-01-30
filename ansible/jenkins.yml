@@ -1,0 +1,25 @@
+- hosts: localhost
+  become: true
+  
+  vars:
+    jenkins_hostname: localhost
+    java_packages:
+      - openjdk-8-jdk
+    jenkins_plugins:
+      [git, greenballs, ec2-plugin, aws-java-sdk, aws-credentials, authentication-tokens, copyartifact, gradle, junit, matrix-project, maven-plugin, pipeline-aws, locale, docker-workflow, ssh, ssh-agent, publish-over-ssh, ssh-credentials, ssh-slaves, sshd, database-postgresql]
+      #- ec2-plugin
+      #- name: ec2-plugin
+      #  version: 1.64
+      #- aws-java-sdk
+      #- name: aws-java-sdk
+      #  version: 1.12.68
+      #- authentication-tokens
+      #- name: authentication-tokens
+      #  version: 1.4
+    #jenkins_admin_username: vieskov
+    #jenkins_admin_password: admin
+
+  roles:
+    - role: geerlingguy.java
+    - role: geerlingguy.jenkins
+

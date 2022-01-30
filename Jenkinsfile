@@ -79,7 +79,7 @@ pipeline {
 
     stage('WARNING!!! Destroy  Infrastructure ') {
       steps {
-        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentials_id: 'pavelp', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: credentials_id, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
           sh '''
             echo "#---> Destroy infrastructure with TF..."
             cd ${WORKSPACE}/terraform

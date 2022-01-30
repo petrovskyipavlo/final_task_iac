@@ -1,8 +1,9 @@
 // Jenkinsfile
 String credentials_id = 'pavelp'
 properties([pipelineTriggers([githubPush()])])
-
-load "$JENKINS_HOME/.envvars/.env.groovy"
+script{
+    load "var/lib/jenkins/.envvars/.env.groovy"
+}
 
 pipeline {
   

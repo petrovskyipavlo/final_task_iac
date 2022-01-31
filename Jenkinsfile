@@ -22,8 +22,8 @@ pipeline {
         steps {
           //"env.VAULT_LOCATION="$JENKINS_HOME/.vault"" 
           script {
-                
-              readProperties(file: "var/lib/jenkins/.envvars/.env.groovy").each {key, value -> env[key] = value }
+              load "/var/lib/jenkins/.envvars/.env.groovy"
+              echo "${env.VAULT_LOCATION}"               
           }
         }
     }

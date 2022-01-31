@@ -51,7 +51,7 @@ pipeline {
             sh """
               set +x
               cd ${WORKSPACE}/terraform
-              ansible-vault decrypt --vault-password-file=${env.VAULT_LOCATION}/${envvar}.txt ${envvar}-secrets.tfvars       
+              ansible-vault decrypt --vault-password-file=${env.VAULT_LOCATION}/${envvar}.txt ${env.VAULT_LOCATION}/${envvar}-secrets.tfvars       
             """
         } 
     }
@@ -101,7 +101,7 @@ pipeline {
           sh """
             set +x
             cd ${WORKSPACE}/terraform   
-            ansible-vault encrypt --vault-password-file=${env.VAULT_LOCATION}/${envvar}.txt ${envvar}-secrets.tfvars      
+            ansible-vault encrypt --vault-password-file=${env.VAULT_LOCATION}/${envvar}.txt ${env.VAULT_LOCATION}/${envvar}-secrets.tfvars      
           """
       }
   }

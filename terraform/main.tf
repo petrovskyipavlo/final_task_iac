@@ -8,10 +8,6 @@ module "vpc" {
   public_subnets  = [var.pubsub_a, var.pubsub_b]
   private_subnets = [var.prvsub_a, var.prvsub_b]
 
-  enable_nat_gateway = true
-  create_igw = true
-  //enable_vpn_gateway = true
-
   tags = var.tags
 }
 
@@ -173,7 +169,7 @@ module "prod_server" {
   source  = "terraform-aws-modules/ec2-instance/aws"
   version = "~> 3.0"
 
-  name = var.name_jenkins_master
+  name = var.name_prod_server
 
   ami                    = data.aws_ami.ubuntu.id  
   instance_type          = var.instance_type
@@ -203,10 +199,7 @@ module "prod_server" {
                 cp -r ~/final_task_iac/ansible/docker ~/.ansible/
                 cp  ~/final_task_iac/ansible/docker.yml ~/.ansible/
                 ansible-playbook ~/.ansible/docker.yml
-
-                #add jenkins to docker group
-                usermod -aG docker jenkins
-
+                
                 reboot                 
                 EOF  
 

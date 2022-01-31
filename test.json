@@ -1,0 +1,32 @@
+{
+  "igw_arn": {
+    "sensitive": false,
+    "type": "string",
+    "value": "arn:aws:ec2:eu-central-1:726029675636:internet-gateway/igw-002f6695fe4a4cd28"
+  },
+  "igw_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "igw-002f6695fe4a4cd28"
+  },
+  "public_ip_jenkins_master": {
+    "sensitive": false,
+    "type": "string",
+    "value": "10.0.0.1"
+  },
+  "public_ip_prod_server": {
+    "sensitive": false,
+    "type": "string",
+    "value": "10.0.0.2"
+  },
+  "vpc_arn": {
+    "sensitive": false,
+    "type": "string",
+    "value": "arn:aws:ec2:eu-central-1:726029675636:vpc/vpc-075175788db684999"
+  },
+  "vpc_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "vpc-075175788db684999"
+  }
+}

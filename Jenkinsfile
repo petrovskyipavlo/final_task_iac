@@ -60,66 +60,77 @@ pipeline {
       steps {
         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: credentials_id, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
           sh 'echo "#---> Initialisation and validation infrastructure with TF..."'
-          sh """
-            
+          sh """            
             cd ${WORKSPACE}/terraform
-            terraform init && terraform validate -var-file=${env.VAULT_LOCATION}/${envvar}-secrets.tfvars
-            
+            terraform init && terraform validate             
           """
         }
       }
     }
+
+    stage('Plan Infrastructure ') {
+      steps {
+        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: credentials_id, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+          sh 'echo "#---> Create  infrastructure with TF..."'
+          sh """            
+            cd ${WORKSPACE}/terraform                      
+            terraform plan  -var-file=${env.VAULT_LOCATION}/${envvar}-secrets.tfvars
+          """
+        }
+      }
+    }
+
+    stage("Approve Creating Infrastructure") {
+      steps { approve('Do you want to create your infrastructure?') }
+		}
 
     stage('Create Infrastructure ') {
       steps {
         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: credentials_id, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-          sh '''
-            echo "#---> Create  infrastructure with TF..."
-            cd ${WORKSPACE}/terraform       
-                     
+          sh 'echo "#---> Create  infrastructure with TF..."'
+          sh """            
+            cd ${WORKSPACE}/terraform                      
             terraform apply -auto-approve -var-file=${env.VAULT_LOCATION}/${envvar}-secrets.tfvars
-          '''
+          """
         }
       }
     }
 	
-	stage('Create list of output variables') {
-      steps {
-        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: credentials_id, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-          sh '''
-            echo "#---> Create list of output variables..."
-            cd ${WORKSPACE}/terraform       
-                       
-            terraform output
-			terraform output -json
-          '''
-        }
+	  stage('Create list of output variables') {
+        steps {
+          withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: credentials_id, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+            sh'echo "#---> Create list of output variables..."'
+            sh """              
+              cd ${WORKSPACE}/terraform                         
+              terraform output
+			        terraform output -json # | jq
+            """
+          }
       }
     }
 
-  stage ('Re-Encrypt the Secrets File') {
-      steps{
-          sh """
-            set +x
-            cd ${WORKSPACE}/terraform   
-            ansible-vault encrypt --vault-password-file=${env.VAULT_LOCATION}/${envvar}.txt ${env.VAULT_LOCATION}/${envvar}-secrets.tfvars      
-          """
-      }
-  }
+    stage ('Re-Encrypt the Secrets File') {
+        steps{
+            sh """
+              set +x
+              cd ${WORKSPACE}/terraform   
+              ansible-vault encrypt --vault-password-file=${env.VAULT_LOCATION}/${envvar}.txt ${env.VAULT_LOCATION}/${envvar}-secrets.tfvars      
+            """
+        }
+    }
     
-    stage("Approve") {
+    stage("Approve Destroying Infrastructure") {
       steps { approve('Do you want to destroy your infrastructure?') }
 		}
 
     stage('WARNING!!! Destroy  Infrastructure ') {
       steps {
         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: credentials_id, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-          sh '''
-            echo "#---> Destroy infrastructure with TF..."
-            cd ${WORKSPACE}/terraform
-            
+          sh'echo "#---> Destroy infrastructure with TF..."'
+          sh """            
+            cd ${WORKSPACE}/terraform            
             terraform destroy -auto-approve
-          '''
+          """
         }
       }
     }   

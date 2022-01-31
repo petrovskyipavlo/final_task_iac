@@ -62,7 +62,7 @@ pipeline {
           sh '''
             echo "#---> Initialisation and validation infrastructure with TF..."
             cd ${WORKSPACE}/terraform
-            terraform init && terraform validate -var-file=${envvar}-secrets.tfvars"
+            terraform init && terraform validate -var-file=${env.VAULT_LOCATION}/${envvar}-secrets.tfvars
             
           '''
         }
@@ -76,7 +76,7 @@ pipeline {
             echo "#---> Create  infrastructure with TF..."
             cd ${WORKSPACE}/terraform       
                      
-            terraform apply -auto-approve -var-file=${envvar}-secrets.tfvars"
+            terraform apply -auto-approve -var-file=${env.VAULT_LOCATION}/${envvar}-secrets.tfvars"
           '''
         }
       }

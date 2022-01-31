@@ -18,10 +18,12 @@ pipeline {
 
   stages{
 
-    stage('Load Script') {     
+    stage('Load Environment Variables') {     
         steps {
+          //"env.VAULT_LOCATION="$JENKINS_HOME/.vault"" 
           script {
-                def util = load("var/lib/jenkins/.envvars/.env.groovy")
+                
+              readProperties(file: "var/lib/jenkins/.envvars/.env.groovy").each {key, value -> env[key] = value }
           }
         }
     }

@@ -18,6 +18,14 @@ pipeline {
 
   stages{
 
+    
+    stage("Checkout") {
+      steps {
+        git credentialsId: 'github-key', url: 'https://github.com/petrovskyipavlo/final_task_iac.git', branch: 'main'
+
+      }
+    }
+
     stage('Load Environment Variables') {     
         steps {
           //"env.VAULT_LOCATION="$JENKINS_HOME/.vault"" 
@@ -26,13 +34,6 @@ pipeline {
               echo "${env.VAULT_LOCATION}"               
           }
         }
-    }
-
-    stage("Checkout") {
-      steps {
-        git credentialsId: 'github-key', url: 'https://github.com/petrovskyipavlo/final_task_iac.git', branch: 'main'
-
-      }
     }
     
     stage('Tools versions') {

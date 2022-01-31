@@ -49,7 +49,7 @@ pipeline {
     stage ('Decrypt the Secrets File') {
         steps{
             sh """
-              set +x
+              set +x 
               cd ${WORKSPACE}/terraform
               ansible-vault decrypt --vault-password-file=${env.VAULT_LOCATION}/${envvar}.txt ${env.VAULT_LOCATION}/${envvar}-secrets.tfvars       
             """
@@ -59,12 +59,13 @@ pipeline {
     stage('Terraform Initialisation') {
       steps {
         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: credentials_id, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-          sh '''
-            echo "#---> Initialisation and validation infrastructure with TF..."
+          sh 'echo "#---> Initialisation and validation infrastructure with TF..."'
+          sh """
+            
             cd ${WORKSPACE}/terraform
             terraform init && terraform validate -var-file=${env.VAULT_LOCATION}/${envvar}-secrets.tfvars
             
-          '''
+          """
         }
       }
     }
@@ -76,7 +77,7 @@ pipeline {
             echo "#---> Create  infrastructure with TF..."
             cd ${WORKSPACE}/terraform       
                      
-            terraform apply -auto-approve -var-file=${env.VAULT_LOCATION}/${envvar}-secrets.tfvars"
+            terraform apply -auto-approve -var-file=${env.VAULT_LOCATION}/${envvar}-secrets.tfvars
           '''
         }
       }

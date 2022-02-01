@@ -136,10 +136,12 @@ module "jenkins_master" {
   user_data       = <<-EOF
                 #!/bin/bash
                 #apt install -y git
-                sudo apt-add-repository -y ppa:ansible/ansible
-                sudo apt update
-                sudo apt install -y ansible
-                sudo apt update
+                apt-add-repository -y ppa:ansible/ansible
+                apt update
+                apt install -y ansible
+                apt update
+
+                apt install -y jq
                 
                 ansible-galaxy install geerlingguy.java
                 ansible-galaxy install geerlingguy.jenkins
@@ -187,6 +189,8 @@ module "prod_server" {
                 sudo apt update
                 sudo apt install -y ansible
                 sudo apt update
+
+                apt install -y jq
                 
                 ansible-galaxy install geerlingguy.java
                 ansible-galaxy install geerlingguy.jenkins

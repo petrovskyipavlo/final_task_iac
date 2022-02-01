@@ -124,7 +124,7 @@ pipeline {
 
             //https://stackoverflow.com/questions/36547680/how-do-i-get-the-output-of-a-shell-command-executed-using-into-a-variable-from-j
             script{
-                sh " 'terraform output -json | jq .public_ip_jenkins_master.value' > command"
+                sh " 'terraform output -json results | jq .public_ip_jenkins_master.value' > command"
                 command_var = readFile('command').trim()
                 sh "export JENKINS_IP=$command_var"
                 

@@ -115,7 +115,7 @@ pipeline {
             // define GIT_COMMIT_EMAIL before pipeline or inside script
             script {
                 JENKINS_IP= sh (
-                script: $(terraform output -json | jq .public_ip_jenkins_master.value),
+                script: "terraform output -json | jq .public_ip_jenkins_master.value",
                 returnStdout: true
                 ).trim()
             }

@@ -108,6 +108,18 @@ pipeline {
               terraform output
               
             """  
+            //def JENKINS_IP = sh(script: "$(terraform output -json | jq .public_ip_jenkins_master.value)" , returnStdout: true)
+            //println JENKINS_IP 
+
+            //https://issues.jenkins.io/browse/JENKINS-55771
+            // define GIT_COMMIT_EMAIL before pipeline or inside script
+            script {
+                JENKINS_IP= sh (
+                script: $(terraform output -json | jq .public_ip_jenkins_master.value),
+                returnStdout: true
+                ).trim()
+            }
+            echo "Git committer email: ${JENKINS_IP}"
             //sh "JENKINS_IP=$(terraform output -json | jq .public_ip_jenkins_master.value) "  
                         
           }
@@ -137,9 +149,7 @@ pipeline {
 			    }
       }
     }
-    //}   
-
-  //} 
+    
     
     stage("Approve Destroying Infrastructure") {
       steps { approve('Do you want to destroy your infrastructure?') }

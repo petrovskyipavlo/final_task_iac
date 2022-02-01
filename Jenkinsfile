@@ -106,7 +106,7 @@ pipeline {
             sh """              
               cd ${WORKSPACE}/terraform                         
               terraform output			         
-              ${JENKINS_IP}=$(terraform output -json | jq .public_ip_jenkins_master.value)
+              JENKINS_IP=$(terraform output -json | jq .public_ip_jenkins_master.value)
             """
           }
       }

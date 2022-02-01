@@ -102,9 +102,7 @@ pipeline {
         steps {
           withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: credentials_id, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
             sh'echo "#---> Create list of output variables..."'
-            /*script{
-                def JENKINS_IP=""
-            }*/
+           
             sh """              
               cd ${WORKSPACE}/terraform                         
               terraform output			         
@@ -126,17 +124,15 @@ pipeline {
 
     stage('Copy Jenkins files to Jenkins in AWS') {
       steps {
-          /*sshagent(credentials : ['ssh-aws']) {
-					sh  '''#!/bin/bash					                   
-				           ssh -o "StrictHostKeyChecking=no" ubuntu@52.14.158.47 'docker stop $(docker ps -a -q) 2> /dev/null || true'
-                           ssh -o "StrictHostKeyChecking=no" ubuntu@52.14.158.47 'docker rm -f $(docker ps -a -q) 2> /dev/null || true'
-	                       ssh -o "StrictHostKeyChecking=no" ubuntu@52.14.158.47 'docker rmi -f $(docker images -a -q) 2> /dev/null || true'				    
-				           ssh -o "StrictHostKeyChecking=no" ubuntu@52.14.158.47 'yes | docker system prune -f 2> /dev/null || true'
-                   scp [OPTIONS] [[user@]src_host:]file1 [[user@]dest_host:]file2
-                   scp file.txt remote_username@10.10.0.2:/remote/directory/newfilename.txt
+          sshagent(credentials : ['ssh-aws']) {
+					sh  '''#!/bin/bash			                   
+				           	    
+				          
+                  scp /var/lib/jenkins/config.xml ubuntu@${JENKINS_IP}:/var/lib/jenkins/config.xml
+                  ssh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} chown jenkins -R /var/lib/jenkins && chgrp jenkins -R /var/lib/jenkins
 				        '''	
 				      
-			    }*/
+			    }
         }
       }
     }   

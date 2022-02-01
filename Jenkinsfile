@@ -30,7 +30,7 @@ pipeline {
 
     stage('Load Environment Variables') {     
         steps {
-          //"env.VAULT_LOCATION="$JENKINS_HOME/.vault"" 
+          
           script {
               load "/var/lib/jenkins/.envvars/.env.groovy"
               echo "${env.VAULT_LOCATION}"               
@@ -113,14 +113,24 @@ pipeline {
 
             //https://issues.jenkins.io/browse/JENKINS-55771
             // define GIT_COMMIT_EMAIL before pipeline or inside script
-            script {
-                def JENKINS_IP= sh (
+            /*script {
+                JENKINS_IP= sh (
                 script: 'terraform output -json | jq .public_ip_jenkins_master.value',
                 returnStdout: true
                 ).trim()
-            }
-            echo "Jenkins IP: ${JENKINS_IP}"
-            //sh "JENKINS_IP=$(terraform output -json | jq .public_ip_jenkins_master.value) "  
+            }*/
+                        
+            //sh "JENKINS_IP=$(terraform output -json | jq .public_ip_jenkins_master.value) " 
+
+            //https://stackoverflow.com/questions/36547680/how-do-i-get-the-output-of-a-shell-command-executed-using-into-a-variable-from-j
+            script{
+                sh " 'terraform output -json | jq .public_ip_jenkins_master.value' > command"
+                command_var = readFile('command').trim()
+                sh "export JENKINS_IP=$command_var"
+                
+            } 
+
+            sh 'echo "Jenkins IP: ${JENKINS_IP}"'
                         
           }
       }

@@ -103,11 +103,12 @@ pipeline {
           withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: credentials_id, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
             sh'echo "#---> Create list of output variables..."'
            
-            sh """              
-              cd ${WORKSPACE}/terraform                         
-              terraform output			         
+            sh """            
+              cd ${WORKSPACE}/terraform                      
+              terraform output
               JENKINS_IP=$(terraform output -json | jq .public_ip_jenkins_master.value)
-            """
+            """       
+                        
           }
       }
     }

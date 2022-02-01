@@ -1,6 +1,6 @@
 // Jenkinsfile
 String credentials_id = 'pavelp'
-def JENKINS_IP=""
+//def JENKINS_IP=""
 
 properties([pipelineTriggers([githubPush()])])
 
@@ -114,7 +114,7 @@ pipeline {
             //https://issues.jenkins.io/browse/JENKINS-55771
             // define GIT_COMMIT_EMAIL before pipeline or inside script
             script {
-                JENKINS_IP= sh (
+                def JENKINS_IP= sh (
                 script: 'terraform output -json | jq .public_ip_jenkins_master.value',
                 returnStdout: true
                 ).trim()

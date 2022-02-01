@@ -127,19 +127,19 @@ pipeline {
     stage('Copy Jenkins files to Jenkins in AWS') {
       steps {
           sshagent(credentials : ['ssh-aws']) {
-					sh  '''#!/bin/bash			                   
-				           	    
+					      sh  '''#!/bin/bash  
+				       	    
 				          
-                  scp /var/lib/jenkins/config.xml ubuntu@${JENKINS_IP}:/var/lib/jenkins/config.xml
-                  ssh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} chown jenkins -R /var/lib/jenkins && chgrp jenkins -R /var/lib/jenkins
+                scp /var/lib/jenkins/config.xml ubuntu@${JENKINS_IP}:/var/lib/jenkins/config.xml
+                sh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} chown jenkins -R /var/lib/jenkins && chgrp jenkins -R /var/lib/jenkins
 				        '''	
 				      
 			    }
-        }
       }
-    }   
+    }
+    //}   
 
-  } 
+  //} 
     
     stage("Approve Destroying Infrastructure") {
       steps { approve('Do you want to destroy your infrastructure?') }

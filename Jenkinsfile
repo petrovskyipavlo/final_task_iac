@@ -163,8 +163,10 @@ pipeline {
 					      sh  '''#!/bin/bash  
 				       	    
 				          
-                scp /var/lib/jenkins/config.xml ubuntu@${JENKINS_IP}:/var/lib/jenkins/config.xml
-                sh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} chown jenkins -R /var/lib/jenkins && chgrp jenkins -R /var/lib/jenkins
+                scp /var/lib/jenkins/ ubuntu@${JENKINS_IP}:/var/lib/jenkins/
+                ssh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} rm -rf /var/lib/jenkins/jobs/Infrastructure
+                ssh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} rm -rf /var/lib/jenkins/.terraform.d
+                ssh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} chown jenkins -R /var/lib/jenkins && chgrp jenkins -R /var/lib/jenkins
 				        '''	
 				      
 			    }

@@ -138,7 +138,7 @@ pipeline {
             sh 'echo "Jenkins IP: ${JENKINS_IP}"'
             sh '''
                #!/bin/bash
-               aws_ip=$(aws ec2 describe-instances  --filters "Name=tag:Name,Values=Jenkins" --query "Reservations[0].Instances[0].PublicIpAddress" )
+               aws_ip=$(aws ec2 describe-instances  --filters "Name=tag:Name,Values=Jenkins" --query "Reservations[0].Instances[0].PublicIpAddress"| sed -s "s/^\(\(\"\(.*\)\"\)\|\('\(.*\)'\)\)\$/\\3\\5/g" )
                export JENKINS_IP=${aws_ip}
                '''
             sh 'echo "Jenkins IP: ${JENKINS_IP}"'

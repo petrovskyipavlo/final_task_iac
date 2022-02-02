@@ -135,13 +135,13 @@ pipeline {
 
             //terraform output -json | jq .public_ip_jenkins_master.value > command out null from Jenkins, but works correct from terminal
             //https://stackoverflow.com/questions/758031/stripping-single-and-double-quotes-in-a-string-using-bash-standard-linux-comma
-            sh 'echo "Jenkins IP: ${JENKINS_IP}"'
+            /*sh 'echo "Jenkins IP: ${JENKINS_IP}"'
             sh '''
                #!/bin/bash
                aws_ip=$(aws ec2 describe-instances  --filters "Name=tag:Name,Values=Jenkins" --query "Reservations[0].Instances[0].PublicIpAddress" )
                export JENKINS_IP=$(eval echo ${aws_ip})
                '''
-            sh 'echo "Jenkins IP: ${JENKINS_IP}"'
+            sh 'echo "Jenkins IP: ${JENKINS_IP}"' */
                         
           }
       }
@@ -162,7 +162,8 @@ pipeline {
           sshagent(credentials : ['ssh-aws']) {
 					      sh  '''#!/bin/bash  
 				       	    
-				          
+				        aws_ip=$(aws ec2 describe-instances  --filters "Name=tag:Name,Values=Jenkins" --query "Reservations[0].Instances[0].PublicIpAddress" )
+                JENKINS_IP=$(eval echo ${aws_ip})  
                 scp /var/lib/jenkins/ ubuntu@${JENKINS_IP}:/var/lib/jenkins/
                 ssh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} rm -rf /var/lib/jenkins/jobs/Infrastructure
                 ssh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} rm -rf /var/lib/jenkins/.terraform.d

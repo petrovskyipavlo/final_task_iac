@@ -1,6 +1,6 @@
 // Jenkinsfile
 String credentials_id = 'pavelp'
-def JENKINS_IP=""
+//def JENKINS_IP=""
 
 properties([pipelineTriggers([githubPush()])])
 

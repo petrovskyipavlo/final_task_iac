@@ -124,22 +124,24 @@ pipeline {
             //sh "JENKINS_IP=$(terraform output -json | jq .public_ip_jenkins_master.value) " 
 
             //https://stackoverflow.com/questions/36547680/how-do-i-get-the-output-of-a-shell-command-executed-using-into-a-variable-from-j
-            script{
+            /*script{
                 sh "cd ${WORKSPACE}/terraform"   
                 sh "rm -f command"              
                 sh 'terraform output -json | jq .public_ip_jenkins_master.value > command '
                 def command_var = readFile('command').trim()
                 sh "export JENKINS_IP=$command_var"
                 
-            }
+            }*/ 
+
+            //terraform output -json | jq .public_ip_jenkins_master.value > command out null from Jenkins, but works correct from terminal
 
             sh 'echo "Jenkins IP: ${JENKINS_IP}"'
             sh '''
                #!/bin/bash
                aws_ip=$(aws ec2 describe-instances  --filters "Name=tag:Name,Values=Jenkins" --query "Reservations[0].Instances[0].PublicIpAddress" )
-               echo ${aws_ip}
+               export JENKINS_IP=${aws_ip}
                '''
-            
+            sh 'echo "Jenkins IP: ${JENKINS_IP}"'
                         
           }
       }

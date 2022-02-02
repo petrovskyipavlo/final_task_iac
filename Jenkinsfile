@@ -129,7 +129,7 @@ pipeline {
                 //sh "terraform output -json > results.json"
                 //sh " 'cat results.json | jq .public_ip_jenkins_master.value' > command"
                 sh "terraform output -json | jq .public_ip_jenkins_master.value > command"
-                sh"command_var = readFile('command').trim()"
+                def command_var = readFile('command').trim()
                 sh "export JENKINS_IP=$command_var"
                 
             }
@@ -137,7 +137,7 @@ pipeline {
             sh 'echo "Jenkins IP: ${JENKINS_IP}"'
             sh '''
                #!/bin/bash
-               aws_ip=$(aws ec2 describe-instances  --filters "Name=tag:Name,Values=Jenkins" --query "Reservations[0].Instances[0].NetworkInterfaces[0].PublicIpAddress)" 
+               aws_ip=$(aws ec2 describe-instances  --filters "Name=tag:Name,Values=Jenkins" --query "Reservations[0].Instances[0].PublicIpAddress" )
                echo ${aws_ip}
                '''
             //aws ec2 --profile prod describe-instances --filters Name=instance-id,Values=i-0f47d09e1d9659981 | jq ".Reservations[0].Instances[0].NetworkInterfaces[0].PrivateIpAddress"

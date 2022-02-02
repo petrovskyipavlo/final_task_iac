@@ -164,7 +164,7 @@ module "jenkins_master" {
                 reboot                 
                 EOF  
 
-  tags = var.tags 
+  tags = var.tag_jenkins 
 }
 
 module "prod_server" {
@@ -207,6 +207,6 @@ module "prod_server" {
                 reboot                 
                 EOF  
 
-  tags = var.tags 
+  tags = var.tag_server 
 }
 

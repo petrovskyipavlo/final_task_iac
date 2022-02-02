@@ -95,6 +95,24 @@ variable "tags" {
   }
 }
 
+variable "tag_jenkins" {
+  description = "Tags to apply to all the resources"
+  type        = map
+
+  default = {
+    Name = "Jenkins"
+  }
+}
+
+variable "tag_server" {
+  description = "Tags to apply to all the resources"
+  type        = map
+
+  default = {
+    Name = "Server"
+  }
+}
+
 ##################################################################
 variable "identifier_for_rds" {
   default = "demodb"

@@ -106,7 +106,7 @@ pipeline {
             sh """            
               cd ${WORKSPACE}/terraform                      
               terraform output
-              terraform output-json
+              terraform output -json
               
             """  
             //def JENKINS_IP = sh(script: "$(terraform output -json | jq .public_ip_jenkins_master.value)" , returnStdout: true)
@@ -124,16 +124,23 @@ pipeline {
             //sh "JENKINS_IP=$(terraform output -json | jq .public_ip_jenkins_master.value) " 
 
             //https://stackoverflow.com/questions/36547680/how-do-i-get-the-output-of-a-shell-command-executed-using-into-a-variable-from-j
-            /*script{
+            script{
                 sh "cd ${WORKSPACE}/terraform"
-                sh "terraform output -json > results.json"
-                sh " 'cat results.json | jq .public_ip_jenkins_master.value' > command"
-                command_var = readFile('command').trim()
+                //sh "terraform output -json > results.json"
+                //sh " 'cat results.json | jq .public_ip_jenkins_master.value' > command"
+                sh "terraform output -json | jq .public_ip_jenkins_master.value > command"
+                sh"command_var = readFile('command').trim()"
                 sh "export JENKINS_IP=$command_var"
                 
-            } */
+            }
 
-            //sh 'echo "Jenkins IP: ${JENKINS_IP}"'
+            sh 'echo "Jenkins IP: ${JENKINS_IP}"'
+            sh '''
+               #!/bin/bash
+               aws_ip=$(aws ec2 describe-instances  --filters "Name=tag:Name,Values=Jenkins" --query "Reservations[0].Instances[0].NetworkInterfaces[0].PublicIpAddress)" 
+               echo ${aws_ip}
+               '''
+            //aws ec2 --profile prod describe-instances --filters Name=instance-id,Values=i-0f47d09e1d9659981 | jq ".Reservations[0].Instances[0].NetworkInterfaces[0].PrivateIpAddress"
                         
           }
       }

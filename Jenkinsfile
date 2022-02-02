@@ -140,8 +140,9 @@ pipeline {
                #!/bin/bash
                aws_ip=$(aws ec2 describe-instances  --filters "Name=tag:Name,Values=Jenkins" --query "Reservations[0].Instances[0].PublicIpAddress" )
                JENKINS_IP=$(eval echo ${aws_ip})
+               echo ${JENKINS_IP} > awsfile
                '''
-            sh 'echo "Jenkins IP: ${JENKINS_IP}"' 
+            //sh 'echo "Jenkins IP: ${JENKINS_IP}"' 
                         
           }
       }
@@ -160,16 +161,15 @@ pipeline {
     stage('Copy Jenkins files to Jenkins in AWS') {
       steps {
           sshagent(credentials : ['ssh-aws']) {
-					      sh  '''#!/bin/bash  
-				       	    
-				        #aws_ip=$(aws ec2 describe-instances  --filters "Name=tag:Name,Values=Jenkins" --query "Reservations[0].Instances[0].PublicIpAddress" )
-                #JENKINS_IP=$(eval echo ${aws_ip})  
-                scp /var/lib/jenkins/ ubuntu@${JENKINS_IP}:/var/lib/jenkins/
-                ssh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} rm -rf /var/lib/jenkins/jobs/Infrastructure
-                ssh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} rm -rf /var/lib/jenkins/.terraform.d
-                ssh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} chown jenkins -R /var/lib/jenkins && chgrp jenkins -R /var/lib/jenkins
-				        '''	
-				      
+              script{
+                  def JENKINS_IP = readFile('awsfile').trim()
+					        sh  '''#!/bin/bash       	    
+				                scp /var/lib/jenkins/ ubuntu@${JENKINS_IP}:/var/lib/jenkins/
+                        ssh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} rm -rf /var/lib/jenkins/jobs/Infrastructure
+                        ssh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} rm -rf /var/lib/jenkins/.terraform.d
+                        ssh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} chown jenkins -R /var/lib/jenkins && chgrp jenkins -R /var/lib/jenkins
+				              '''	
+              }
 			    }
       }
     }

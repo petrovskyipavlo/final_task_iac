@@ -168,9 +168,15 @@ pipeline {
                         ssh  -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} mkdir -p /home/ubuntu/jenkins/
 				                scp --o "StrictHostKeyChecking=no" /var/lib/jenkins/config.xml ubuntu@${JENKINS_IP}:/home/ubuntu/jenkins/
                         scp -o "StrictHostKeyChecking=no" /var/lib/jenkins/credentials.xml ubuntu@${JENKINS_IP}:/home/ubuntu/jenkins/
-                        ssh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} sudo cp /home/ubuntu/jenkins/config.xml /var/lib/jenkins
-                        ssh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} sudo cp /home/ubuntu/jenkins/credentials.xml /var/lib/jenkins
-                        
+                        scp -r -o "StrictHostKeyChecking=no" /var/lib/jenkins/plugins ubuntu@${JENKINS_IP}:/home/ubuntu/jenkins/
+                        scp -r -o "StrictHostKeyChecking=no" /var/lib/jenkins/users ubuntu@${JENKINS_IP}:/home/ubuntu/jenkins/
+                        scp -r -o "StrictHostKeyChecking=no" /var/lib/jenkins/.vault ubuntu@${JENKINS_IP}:/home/ubuntu/jenkins/
+                        scp -r -o "StrictHostKeyChecking=no" /var/lib/jenkins/.envvars ubuntu@${JENKINS_IP}:/home/ubuntu/jenkins/
+                        #scp -r -o "StrictHostKeyChecking=no" /var/lib/jenkins/jobs/wordpress ubuntu@${JENKINS_IP}:/home/ubuntu/jenkins/ 
+
+
+                        ssh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} sudo cp -R /home/ubuntu/jenkins/ /var/lib/jenkins                   
+               
                         ssh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} sudo chown jenkins -R /var/lib/jenkins && chgrp jenkins -R /var/lib/jenkins
                         ssh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} sudo rm -rf /home/ubuntu/jenkins/
 				              '''	

@@ -136,10 +136,13 @@ pipeline {
             //terraform output -json | jq .public_ip_jenkins_master.value > command out null from Jenkins, but works correct from terminal
             //https://stackoverflow.com/questions/758031/stripping-single-and-double-quotes-in-a-string-using-bash-standard-linux-comma
             //sh 'echo "Jenkins IP: ${JENKINS_IP}"'
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            
             sh '''
                #!/bin/bash
-               aws_ip=$(aws ec2 describe-instances  --filters "Name=tag:Name,Values=Jenkins" --query "Reservations[0].Instances[0].PublicIpAddress" )
-               JENKINS_IP=$(eval echo ${aws_ip})
+               aws_ip=$(aws ec2 describe-instances  --filters "Name=tag:Name,Values=Jenkins" --query "Reservations[*].Instances[*].PublicIpAddress" )
+               #JENKINS_IP=$(eval echo ${aws_ip}) 
+               JENKINS_IP=(echo $aws_ip | grep -Eo '[0-9]+[.][0-9]+[.][0-9]+[.][0-9]+')
                echo ${JENKINS_IP} > awsfile
                '''
             //sh 'echo "Jenkins IP: ${JENKINS_IP}"' 

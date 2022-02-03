@@ -165,8 +165,8 @@ pipeline {
                   //def JENKINS_IP = readFile('awsfile').trim()
 					        sh  '''#!/bin/bash                       
                         JENKINS_IP=$(cat awsfile) 
-                        chown -R root:jenkins   /var/lib/jenkins/
-				                scp -o "StrictHostKeyChecking=no" /var/lib/jenkins/config.xml ubuntu@${JENKINS_IP}:/var/lib/jenkins/
+                        ssh -vvv -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} chown -R root:jenkins   /var/lib/jenkins/
+				                scp -vvv -o "StrictHostKeyChecking=no" /var/lib/jenkins/config.xml ubuntu@${JENKINS_IP}:/var/lib/jenkins/
                         scp -o "StrictHostKeyChecking=no" /var/lib/jenkins/credentials.xml ubuntu@${JENKINS_IP}:/var/lib/jenkins/
                         //ssh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} rm -rf /var/lib/jenkins/jobs/Infrastructure
                         //ssh -o "StrictHostKeyChecking=no" ubuntu@${JENKINS_IP} rm -rf /var/lib/jenkins/.terraform.d

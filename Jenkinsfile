@@ -142,7 +142,7 @@ pipeline {
                #!/bin/bash
                aws_ip=$(aws ec2 describe-instances  --filters "Name=tag:Name,Values=Jenkins" --query "Reservations[*].Instances[*].PublicIpAddress" )
                #JENKINS_IP=$(eval echo ${aws_ip}) 
-               JENKINS_IP=(echo $aws_ip | grep -Eo '[0-9]+[.][0-9]+[.][0-9]+[.][0-9]+')
+               JENKINS_IP=$(echo $aws_ip | grep -Eo '[0-9]+[.][0-9]+[.][0-9]+[.][0-9]+')
                echo ${JENKINS_IP} > awsfile
                '''
             //sh 'echo "Jenkins IP: ${JENKINS_IP}"' 

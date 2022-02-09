@@ -16,8 +16,8 @@
       #- authentication-tokens
       #- name: authentication-tokens
       #  version: 1.4
-    #jenkins_admin_username: vieskov
-    #jenkins_admin_password: admin
+    #jenkins_admin_username: pavelp
+    #jenkins_admin_password: pavelp
 
   roles:
     - role: geerlingguy.java
